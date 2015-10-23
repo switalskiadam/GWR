@@ -1,0 +1,7 @@
+library(lattice)
+Ancillary_POR <- ANC[,6]
+ADR <- ANC[,8]
+regPOR <- lm(Ancillary_POR ~ ADR)
+xyplot(Ancillary_POR ~ ADR, data = ANC)
+xyplot(Ancillary_POR ~ ADR | Month, data = ANC, layout = c(2,6))
+
