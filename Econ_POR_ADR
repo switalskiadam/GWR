@@ -6,3 +6,38 @@ xyplot(Ancillary_POR ~ ADR | Month, data = ANC, layout = c(2,6))
 Ancillary_POR <- ANC[,6]
 ADR <- ANC[,8]
 regPOR <- lm(Ancillary_POR ~ ADR)
+
+
+##WIP
+setwd("C:/Users/aswitalski/Desktop/R")
+library(lattice)
+ANC <- read.csv("POR_v_ADR.csv")
+
+
+POCOPA <- ANC[ANC$Property =="POCONOS",]
+GRAPTX <- ANC[ANC$Property =="GRAPEVINE",]
+WILLVA <- ANC[ANC$Property =="WILLIAMSBURG",]
+NEWEMA <- ANC[ANC$Property =="NEW ENGLAND",]
+MASOOH <- ANC[ANC$Property =="MASON FAMILY RESORTS",]
+CONCNC <- ANC[ANC$Property =="CONCORD",]
+TRAVMI <- ANC[ANC$Property =="TRAVERSE CITY",]
+KANSKS <- ANC[ANC$Property =="KANSAS CITY",]
+GRANWA <- ANC[ANC$Property =="GRAND MOUND",]
+DELLWI <- ANC[ANC$Property =="WISCONSIN DELLS",]
+SANDOH <- ANC[ANC$Property =="SANDUSKY",]
+
+colmaxADR <- function(prop) {
+    max(prop$ADR, na.rm = TRUE)
+}
+
+
+xyplot(Ancillary_POR ~ ADR, data = CONCNC, xlim= c(0, 500), ylim= c(0,500))
+xyplot(Ancillary_POR ~ ADR| Month , CONCNC, layout = c(2,6))
+
+Ancillary_POR <- ANC[,6]
+ADR <- ANC[,8]
+regPOR <- lm(Ancillary_POR ~ ADR)
+regPOR
+
+xyplot(Ancillary_POR ~ ADR | Month,  Property = "POCONOS" , data = ANC, layout = c(2,6))
+xyplot(Ancillary_POR ~ ADR,  Property = "POCONOS" , data = ANC)
