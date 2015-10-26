@@ -1,7 +1,8 @@
+setwd("C:/Users/aswitalski/Desktop/R")
 library(lattice)
+ANC <- read.csv("POCO_POR_v_ADR.csv")
+xyplot(Ancillary_POR ~ ADR, data = ANC)
+xyplot(Ancillary_POR ~ ADR | Month, data = ANC, layout = c(2,6))
 Ancillary_POR <- ANC[,6]
 ADR <- ANC[,8]
 regPOR <- lm(Ancillary_POR ~ ADR)
-xyplot(Ancillary_POR ~ ADR, data = ANC)
-xyplot(Ancillary_POR ~ ADR | Month, data = ANC, layout = c(2,6))
-
