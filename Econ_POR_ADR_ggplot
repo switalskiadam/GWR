@@ -1,1 +1,39 @@
+setwd("C:/Users/aswitalski/Desktop/R")
+library("ggplot2")
+ANC <- read.csv("POR_v_ADR.csv")
 
+
+POCOPA <- ANC[ANC$Property =="POCONOS",]
+GRAPTX <- ANC[ANC$Property =="GRAPEVINE",]
+WILLVA <- ANC[ANC$Property =="WILLIAMSBURG",]
+NEWEMA <- ANC[ANC$Property =="NEW ENGLAND",]
+MASOOH <- ANC[ANC$Property =="MASON FAMILY RESORTS",]
+CONCNC <- ANC[ANC$Property =="CONCORD",]
+TRAVMI <- ANC[ANC$Property =="TRAVERSE CITY",]
+KANSKS <- ANC[ANC$Property =="KANSAS CITY",]
+GRANWA <- ANC[ANC$Property =="GRAND MOUND",]
+DELLWI <- ANC[ANC$Property =="WISCONSIN DELLS",]
+SANDOH <- ANC[ANC$Property =="SANDUSKY",]
+
+colmaxADR <- function(data) {
+    max(data$ADR, na.rm = TRUE)
+}
+
+colmaxPOR <- function(data) {
+    max(data$Ancillary_POR, na.rm = TRUE)
+}
+
+
+prop <- SANDOH
+prop2 <- prop$Property[1]
+A <- colmaxADR(prop)
+P <- colmaxPOR(prop)
+
+ggplot(prop, aes(x= ADR, y=Ancillary_POR)) +
+    geom_point(shape = 1, size = 2, colour="#CC0000") +
+    xlim(c(0,A)) +
+    ylim(c(0,P)) +
+    geom_smooth(method = lm,
+                  se = FALSE, size = 1.25) +
+    ggtitle(prop2)
+    
