@@ -31,7 +31,7 @@ regline <- lm(Ancillary_POR ~ ADR, data= prop)
 
 xyplot(Ancillary_POR ~ ADR, data = prop, xlim= c(0, A), ylim= c(0,P))
 xyplot(Ancillary_POR ~ ADR| Month ,data= prop,xlim= c(0, A), ylim= c(0,P), layout = c(2,6))
-xyplot(Ancillary_POR ~ ADR| SIP , data = prop, xlim= c(0, A), ylim= c(0,P),layout = c(2,2))
+xyplot(Ancillary_POR ~ ADR| factor(SIP) , data = prop, xlim= c(0, A), ylim= c(0,P),layout = c(2,2))
 xyplot(Ancillary_POR ~ ADR| DOW , data = prop, xlim= c(0, A), ylim= c(0,P),layout = c(2,4))
 
 
