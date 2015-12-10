@@ -16,22 +16,50 @@ DELLWI <- ANC[ANC$Property =="WISCONSIN DELLS",]
 SANDOH <- ANC[ANC$Property =="SANDUSKY",]
 
 colmaxADR <- function(data) {
-    max(data$ADR, na.rm = TRUE)
+  max(data$ADR, na.rm = TRUE)
 }
 
 colmaxPOR <- function(data) {
-    max(data$Ancillary_POR, na.rm = TRUE)
+  max(data$Ancillary_POR, na.rm = TRUE)
 }
 
 
-prop <- KANSKS
+prop <- POCOPA
 A <- colmaxADR(prop)
 P <- colmaxPOR(prop)
 regline <- lm(Ancillary_POR ~ ADR, data= prop)
 
-xyplot(Ancillary_POR ~ ADR, data = prop, xlim= c(0, A), ylim= c(0,P))
-xyplot(Ancillary_POR ~ ADR| Month ,data= prop,xlim= c(0, A), ylim= c(0,P), layout = c(2,6))
-xyplot(Ancillary_POR ~ ADR| factor(SIP) , data = prop, xlim= c(0, A), ylim= c(0,P),layout = c(2,2))
-xyplot(Ancillary_POR ~ ADR| DOW , data = prop, xlim= c(0, A), ylim= c(0,P),layout = c(2,4))
+xyplot(Ancillary_POR ~ ADR, 
+       data = prop, 
+       xlim= c(0, A), 
+       ylim= c(0,P))
 
+xyplot(Ancillary_POR ~ ADR| Month,
+       data= prop,
+       xlim= c(0, A), 
+       ylim= c(0,P), 
+       layout = c(2,6),
+       panel = function(x,y,...){
+        panel.xyplot(x,y,...)
+        panel.abline(lm(y~x))
+       })
 
+xyplot(Ancillary_POR ~ ADR| factor(SIP), 
+       data = prop, 
+       xlim= c(0, A), 
+       ylim= c(0,P),
+       layout = c(2,2),
+       panel = function(x,y,...){
+         panel.xyplot(x,y,...)
+         panel.abline(lm(y~x))
+       })
+
+xyplot(Ancillary_POR ~ ADR| DOW , 
+       data = prop, 
+       xlim= c(0, A), 
+       ylim= c(0,P),
+       layout = c(2,4),
+       panel = function(x,y,...){
+         panel.xyplot(x,y,...)
+         panel.abline(lm(y~x))
+       })
