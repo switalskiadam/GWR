@@ -1,0 +1,45 @@
+### Text analytics 
+install.packages("class")
+library(tm)
+install.packages("wordcloud")
+library(wordcloud)
+
+## Intialize environment
+libs <- c("tm","plyr","class")
+lapply(libs, require, character.only = TRUE)
+setwd("C:/Users/aswitalski/Desktop/R")
+nameFile <- "test.csv"
+reviews <- read.csv(nameFile, stringsAsFactors = FALSE)
+
+## Combine all reviews together
+##review_text <- paste(reviews$header, collapse = " ")
+reviewSource <- VectorSource(reviews)
+corpus <- Corpus(reviewSource)
+
+
+## Clean up text
+
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
+corpus <- tm_map(corpus, removeNumbers)
+
+
+## Build term document matrix
+tdm <- TermDocumentMatrix(corpus)
+tdm2 <- as.matrix(tdm)
+
+
+## Finding frequent terms
+frequency <- colSums(tdm2)
+frequency <- sort(frequency, decreasing = TRUE, is.na = FALSE)
+
+## Word Cloud
+
+words <- names(frequency)
+
+wordcloud(words[1:100], frequency[1:100])
+
+
+
