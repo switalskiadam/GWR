@@ -1,0 +1,10 @@
+stop_words <- stopwords(kind = "en")
+
+setwd("C:/Users/aswitalski/Desktop/R")
+write(
+    stop_words,
+    file = "stopwords.txt",
+    ncolumns = if(is.character(stop_words)) 1 else 5,
+    append = FALSE,
+    sep = " "
+)
