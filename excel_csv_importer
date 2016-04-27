@@ -1,0 +1,64 @@
+
+Sub SWEET_MOTHER_OF_EXCEL()
+    Dim fso As Object
+    Dim fldStart As Object
+    Dim fld As Object
+    Dim fl As Object
+    Dim Mask As String
+    
+Application.ScreenUpdating = False 'Allows you too see the macro working
+Dim newWS As Worksheet
+Set newWS = Sheets.Add(before:=Sheets(1)) 'Inserts a new worksheet before the first sheet
+    
+    Set fso = CreateObject("scripting.FileSystemObject")
+    Set fldStart = fso.GetFolder("C:\Users\aswitalski\Documents\Comments") ' <-- use your File location code here
+    Mask = "*.csv"  '<---- what type of extension on the file
+    ListFiles fldStart, Mask
+    For Each fld In fldStart.SubFolders
+        ListFiles fld, Mask
+        ListFolders fld, Mask
+    Next
+   
+Dim myWB As Workbook, WB As Workbook
+Set myWB = ThisWorkbook
+Dim L As Long, t As Long, i As Long
+L = myWB.Sheets(1).Cells(Rows.Count, "A").End(xlUp).Row
+t = 1
+For i = 1 To L
+Workbooks.OpenText Filename:=myWB.Sheets(1).Cells(i, 1).Value, DataType:=xlDelimited, Comma:=True ' Change your delimiter here
+Set WB = ActiveWorkbook
+WB.Sheets(1).UsedRange.Copy newWS.Cells(t, 2)
+t = myWB.Sheets(1).Cells(Rows.Count, "B").End(xlUp).Row + 1
+WB.Close False
+Next
+myWB.Sheets(1).Columns(1).Delete
+Application.ScreenUpdating = True
+End Sub
+ 
+
+Sub ListFolders(fldStart As Object, Mask As String)
+    Dim fld As Object
+    For Each fld In fldStart.SubFolders
+        ListFiles fld, Mask
+        ListFolders fld, Mask
+    Next
+End Sub
+ 
+
+Sub ListFiles(fld As Object, Mask As String)
+Dim t As Long
+    Dim fl As Object
+    For Each fl In fld.Files    'creates looped code to pull each file in
+        'If fl.Name Like Mask Then
+        t = Sheets(1).Cells(Rows.Count, "A").End(xlUp).Row + 1
+            If Sheets(1).Cells(1, 1) = "" Then
+            Sheets(1).Cells(1, 1) = fld.Path & "\" & fl.Name
+            Else
+            Sheets(1).Cells(t, 1) = fld.Path & "\" & fl.Name
+            End If
+        'End If
+    Next
+End Sub
+
+
+
