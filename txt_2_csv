@@ -1,0 +1,9 @@
+setwd("/users/aswitalski/desktop/rates")
+FILES <- list.files(pattern = ".txt")
+
+for(i in 1:length(FILES)) {
+  FILE=read.table(file=FILES[i],header = T,sep = ",")
+  write.csv(FILE,file=paste0("/users/aswitalski/desktop/RatesCSV/",sub(".txt","",FILES[i]),".csv"),row.names = FALSE)
+}
+
+
