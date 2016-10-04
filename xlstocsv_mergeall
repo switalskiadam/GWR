@@ -1,0 +1,45 @@
+
+library(gdata)
+library(dplyr)
+perl <- c("C:/Perl64/bin/perl.exe")
+
+
+setwd("C:/Users/aswitalski/Desktop/TEST")
+data_files <- list.files()
+for(i in 1:length(data_files)){
+  table_1 <- read.xls(data_files[i],
+                      header = FALSE,
+                      perl=perl,
+                      sep=",",
+                      skip = 1,
+                      comment.char = "",
+                      stringsAsFactors = FALSE,
+                      allowEscapes = TRUE)
+        write.csv(table_1, 
+            file= paste0("C:/Users/aswitalski/Desktop/TESTR/",
+            sub(".XLS",".csv",data_files[i])),
+            row.names = FALSE)
+}
+
+
+
+
+
+data_filesR <- list.files("C:/Users/aswitalski/Desktop/TESTR")
+##merge multiple files function
+setwd("C:/Users/aswitalski/Desktop/TESTR")
+for(i in 1:length(data_filesR)){
+    if(!exists("dataset")){
+        dataset <- read.csv(file=data_filesR[i],sep=",",header = TRUE)
+        } else {
+        if(exists("dataset")){
+            temp_dataset <-read.csv(file=data_filesR[2],sep=",",header=TRUE)
+            temp_dataset <- temp_dataset[-1,]
+            dataset <- rbind(dataset,temp_dataset)
+            rm(temp_dataset)
+            }
+        }
+    }
+
+write.csv(dataset,
+          file = paste0("C:/Users/aswitalski/Desktop/TESTR/CombinedFile.csv"))
