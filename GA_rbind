@@ -1,0 +1,26 @@
+
+
+
+setwd("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files")
+compileddata <- c("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/00Combined.csv")
+datafiles <- list.files()
+##combine new files to original
+for(i in 1:length(datafiles)){
+      if(!exists("dataset1")){    
+            dataset1 <- read.csv(datafiles[i],sep = ",") }else{
+            if(exists("dataset1")){
+                  tempdataset <- read.csv(datafiles[i],
+                                  sep = ",")
+                  dataset1 <- rbind(dataset1,tempdataset)
+                  rm(tempdataset)
+            }
+      }
+}
+
+write.csv(dataset1,
+          file= compileddata,
+          row.names = FALSE)
+write.csv(dataset1,
+          file= paste0("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/Older Combined/00Combined",format(Sys.Date(),"%m%d%Y"),".csv"),
+          row.names = FALSE)
+
