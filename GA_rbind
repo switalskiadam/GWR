@@ -21,6 +21,7 @@ write.csv(dataset1,
           file= compileddata,
           row.names = FALSE)
 write.csv(dataset1,
-          file= paste0("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/Older Combined/00Combined",format(Sys.Date(),"%m%d%Y"),".csv"),
+          file= paste0("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/Older Combined/00Combined",format(Sys.Date(),"%Y%m%d"),".csv"),
           row.names = FALSE)
+
 
