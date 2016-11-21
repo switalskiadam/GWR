@@ -1,27 +1,45 @@
 
 
-
+## Set working directory to the GA data folder
 setwd("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files")
 compileddata <- c("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/00Combined.csv")
-datafiles <- list.files()
+datafiles <- list.files(pattern = ".csv")
 ##combine new files to original
 for(i in 1:length(datafiles)){
       if(!exists("dataset1")){    
             dataset1 <- read.csv(datafiles[i],sep = ",") }else{
             if(exists("dataset1")){
+                  ##loads first csv in folder (should be 00Combined.csv)
                   tempdataset <- read.csv(datafiles[i],
                                   sep = ",")
                   dataset1 <- rbind(dataset1,tempdataset)
+                  ##Write and save a copy of the uploaded datafile
+                  write.csv(tempdataset,
+                            file = paste0("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/LoadedFiles/",
+                                          sub(".csv","",datafiles[i]),
+                                          "_",
+                                          format(Sys.Date(),"%Y%m%d"),
+                                          ".csv"),
+                                          row.names = FALSE)
                   rm(tempdataset)
             }
       }
 }
 
+doublecheck <- read.csv(datafiles[1])
+
+##Saves a new copy of 00Combined.csv 
 write.csv(dataset1,
           file= compileddata,
           row.names = FALSE)
+##Saves a new copy in the older versions
 write.csv(dataset1,
-          file= paste0("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/Older Combined/00Combined",format(Sys.Date(),"%Y%m%d"),".csv"),
+          file= paste0("N:/DVReports/Revenue/Operations Analyst/Property Traffic/GA Historical Data Files/Older Combined/00Combined","_",format(Sys.Date(),"%Y%m%d"),".csv"),
           row.names = FALSE)
 
+##Deletes loaded files
+for (i in 2:length(datafiles)){
+      file.remove(datafiles[i])
+}
 
+rm(dataset1)
