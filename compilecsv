@@ -1,0 +1,20 @@
+setwd("C:/Users/aswitalski/Desktop/DMA_Files")
+datafiles <- list.files(pattern = ".csv")
+
+for(i in 1:length(datafiles)){
+  if(!exists("dataset1")){    
+    dataset1 <- read.csv(datafiles[i],sep = ",") }else{
+      if(exists("dataset1")){
+        ##loads first csv in folder
+        tempdataset <- read.csv(datafiles[i],
+                                sep = ",")
+        dataset1 <- rbind(dataset1,tempdataset)
+       
+        rm(tempdataset)
+      }
+    }
+}
+
+write.csv(dataset1, 
+          file = paste0("C:/Users/aswitalski/Desktop/DMA_Files/CombinedFile.csv"),
+          row.names = FALSE)
