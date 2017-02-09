@@ -1,0 +1,248 @@
+#### install package if you don't have it ######
+install.packages("lubridate")
+
+###### Load packages ######
+library(lubridate)
+
+##set additional data parameters
+grouponoffercode <- c("GRPNFEB")
+grouponemailid <- 1254796
+grouponsourcecode <- c("NA")
+bookingdate <- as.Date(c("2/7/2017"),format= "%m/%d/%Y")
+
+
+
+##### set file pathway where groupon files are located #####
+setwd("M:/Revenue Managers/GRPNFEB/")
+
+##### final location for csvs to be saved ######
+folderpath <- c("C:/Users/jboot/Desktop/")
+
+##### Groupon property coding #####
+properties <- data.frame(Property = c("SANDOH","NEWEMA","SOUTCA","TRAVMI"),
+                         Code = c("SD","NE","CA","TC"))
+
+##### column names for opera data file #####
+
+operanames <- c("transaction_id",
+                "full_name",
+                "suite_code",
+                "alternate_suite_code",
+                "opera_code",
+                "arrival",
+                "departure",
+                "num_adults",
+                "offer_code",
+                "source_code",
+                "third_party_abbreviation",
+                "email",
+                "city",
+                "state_providence",
+                "country",
+                "postal_code",
+                "street_line1",
+                "streetline2",
+                "phone",
+                "alternate_phone",
+                "email_id",
+                "suite_title",
+                "alt_suite_title")
+
+
+
+
+#######################
+
+propcode <- as.vector(properties$Code)
+
+
+##### Load Files #####
+grouponextranetfiles <- list.files(pattern=".csv")[grep("Extranet",list.files(pattern = ".csv"))]
+grouponmerchantfiles <- list.files(pattern=".csv")[grep("Merchant",list.files(pattern = ".csv"))]
+
+
+##### Combine extranet files and add propertyid #####
+for(i in 1:length(grouponextranetfiles)){
+  if(!exists("extranet")){
+    extranet <- read.csv(file = grouponextranetfiles[i],
+                         sep = ",")
+    filename <- grouponextranetfiles[i]
+    x <- as.numeric(i)
+    for(i in 1:length(grouponextranetfiles)){
+      if(!exists("prop")){   
+        if(length(as.logical(grep(propcode[i],filename)))==0){
+          prop <- FALSE
+        }else{
+          prop <- as.logical(grep(propcode[i],filename))
+        }
+      }else{
+        if(exists("prop")){
+          if(length(as.logical(grep(propcode[i],filename)))==0){
+            prop1 <- FALSE
+          }else{
+            prop1 <- as.logical(grep(propcode[i],filename))
+          }
+          prop <- rbind(prop,prop1)
+        }
+      }
+    }
+    
+    property <-properties$Property[prop]
+    extranet$property <- property
+    rm(prop)
+    rm(prop1)
+  }else{
+    if(exists("extranet")){
+      extranet1 <- read.csv(file = grouponextranetfiles[i],
+                            sep = ",")
+      filename <- grouponextranetfiles[i]
+      x <- as.numeric(i)
+      for(i in 1:length(grouponextranetfiles)){
+        if(!exists("prop")){   
+          if(length(as.logical(grep(propcode[i],filename)))==0){
+            prop <- FALSE
+          }else{
+            prop <- as.logical(grep(propcode[i],filename))
+          }
+        }else{
+          if(exists("prop")){
+            if(length(as.logical(grep(propcode[i],filename)))==0){
+              prop1 <- FALSE
+            }else{
+              prop1 <- as.logical(grep(propcode[i],filename))
+            }
+            prop <- rbind(prop,prop1)
+          }
+        }
+      }
+    }           
+    property <-properties$Property[prop]
+    extranet1$property <- property
+    rm(prop)
+    rm(prop1)
+    extranet <- rbind(extranet,extranet1)
+    
+  }
+}
+rm(extranet1)
+
+
+##### Combine merchant files #####
+for(i in 1:length(grouponmerchantfiles)){
+  if(!exists("merchant")){
+    merchant <- read.csv(file = grouponmerchantfiles[i],
+                         sep = ",")
+    
+  }else{
+    if(exists("merchant")){
+      merchant1 <- read.csv(file = grouponmerchantfiles[i],
+                            sep = ",")
+    }           
+    
+    merchant <- rbind(merchant,merchant1)
+    
+  }
+}
+rm(merchant1)
+
+##### remove unwanted data #####
+merchant <- merchant[,c("Customer","Please.enter.your.Email.Address")]
+##combine names
+extranet$mergename <- paste(extranet$Traveler.First,extranet$Traveler.Last,sep= " ")
+extranet$operaname <- paste(extranet$Traveler.Last,extranet$Traveler.First,sep= ", ")
+##combine files
+test<-merge(extranet,merchant,by.x = "mergename", by.y = "Customer",all.x = TRUE)
+test$Please.enter.your.Email.Address <- as.character(test$Please.enter.your.Email.Address)
+test$Please.enter.your.Email.Address[is.na(test$Please.enter.your.Email.Address)] <- ""
+##remove duplicates and order
+test2 <- subset(test,!duplicated(test$Booking.Number))
+test2 <- test2[order(test2$Status,test2$Booking.Number),]
+rm(extranet,merchant,properties,test,x,i,propcode,property,filename,grouponmerchantfiles,grouponextranetfiles)
+
+
+
+### Add in additional room type info ####
+roomtype <- read.csv(paste0(getwd(),"/RoomTypes.csv"),header=TRUE)
+test3 <- merge(test2,roomtype,all.x = TRUE)
+test3$OfferCode <- grouponoffercode 
+test3$sourcecode <- grouponsourcecode
+test3$emailid <- grouponemailid
+test3$thirdparty <- c("GRP")
+test3$city <- ""
+test3$state <- ""
+test3$country <- ""
+test3$post <- ""
+test3$street <- ""
+test3$street2 <- ""
+test3$phone <- ""
+test3$phone2 <- ""
+rm(roomtype,test2)
+
+######## reorder to match opera fields ####
+
+test3 <- test3[,c("Booking.Number",
+                  "operaname",
+                  "Opera.Room",
+                  "Alt.Room",
+                  "property",
+                  "Check.in.Date",
+                  "Check.out.Date",
+                  "Inventory",
+                  "OfferCode",
+                  "sourcecode",
+                  "thirdparty",
+                  "Please.enter.your.Email.Address",
+                  "city",
+                  "state",
+                  "country",
+                  "post",
+                  "street",
+                  "street2",
+                  "phone",
+                  "phone2",
+                  "emailid",
+                  "Opera.Name",
+                  "Alt.Name",
+                  "Status",
+                  "Booking.Date")]
+####### Format Date to yyyy-mm-dd ########
+
+
+test3$Check.in.Date <- parse_date_time(test3$Check.in.Date,guess_formats(test3$Check.in.Date,orders = c("mdy","ymd")))
+test3$Check.in.Date <- ymd(test3$Check.in.Date)
+
+test3$Check.out.Date <- parse_date_time(test3$Check.out.Date,guess_formats(test3$Check.out.Date,orders = c("mdy","ymd")))
+test3$Check.out.Date <- ymd(test3$Check.out.Date)
+
+test3$Booking.Date <- parse_date_time(test3$Booking.Date,guess_formats(test3$Booking.Date,orders = c("mdy","ymd")))
+test3$Booking.Date <- ymd(test3$Booking.Date)
+
+##### create cancels file #####
+
+cxlfile <- subset(test3, test3$Status == "canceled")
+cxlfile <- cxlfile[,1:23]
+names(cxlfile) <- operanames
+write.csv(cxlfile, 
+          file=paste0(folderpath,
+                      "Groupon_Cancel_File",
+                      format(bookingdate,"%Y%m%d"),
+                      ".csv"),
+          row.names = FALSE)
+
+test3 <- subset(test3,test3$Booking.Date == bookingdate)
+
+##### create res file ######
+
+resfile <- subset(test3, test3$Status == "confirmed")
+resfile <- resfile[,1:23]
+names(resfile) <- operanames
+write.csv(resfile,
+          file=paste0(folderpath,
+                      "Groupon_Res_File",
+                      format(bookingdate,"%Y%m%d"),
+                      ".csv"),
+          row.names = FALSE)
+rm(test3)
+
+
+
