@@ -1,0 +1,41 @@
+
+setwd("N:/DVReports/Revenue/Operations Analyst/FOR ALEX/KC Text Analytics 2017/Data Files")
+
+for(i in 1:length(list.files(pattern = '.csv'))){
+  if(!exists('dataset1')){
+test <- read.csv(list.files()[1]
+                 ,header = TRUE
+                 ,row.names = NULL
+                 ,na.strings = c("","NA")
+                 ,skip = 1
+                 ,encoding = 'UTF-8')
+ 
+test1 <- test[12:19]    
+test2 <- data.frame(test1[,c("Property.Code","Loyalty..Promoter","Loyalty..Detractor","Loyalty..Passive","Overall..Suggestions")])
+test3 <- subset(test2,Property.Code == "\"Kansas City\"")
+test4 <- data.frame(lapply(test3, as.character),stringsAsFactors = FALSE)
+test5 <- test4[,-1]
+test6 <- stack(test5)
+test7 <- data.frame(test6[,-2])
+dataset1 <- na.omit(test7)
+rm(test,test1,test2,test3,test4,test5,test6,test7)
+  }else{
+    test <- read.csv(list.files()[2]
+                     ,header = TRUE
+                     ,row.names = NULL
+                     ,na.strings = c("","NA")
+                     ,skip = 1
+                     ,encoding = 'UTF-8')
+    
+    test1 <- test[12:19]                
+    test2 <- data.frame(test1[,c("Property.Code","Loyalty..Promoter","Loyalty..Detractor","Loyalty..Passive","Overall..Suggestions")])
+    test3 <- subset(test2,Property.Code == "\"Kansas City\"")
+    test4 <- data.frame(lapply(test3, as.character),stringsAsFactors = FALSE)
+    test5 <- test4[,-1]
+    test6 <- stack(test5)
+    test7 <- data.frame(test6[,-2])
+    dataset2 <- na.omit(test7)
+    dataset1 <- rbind(dataset1,dataset2)
+    rm(test,test1,test2,test3,test4,test5,test6,test7,dataset2)
+}
+}
